@@ -9,7 +9,7 @@
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
     "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
-    "build": "cd frontend && npm run build",
+    "build": "echo 'No build needed for backend only'",
     "test": "echo \"No tests specified\" && exit 0",
     "db:init": "node database/init-db.js --standalone",
     "db:test": "node database/test-connection.js",
