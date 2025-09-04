@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const { createHealthCheck } = require('../../database/test-connection');
 const router = express.Router();
 
 // Health check endpoint
@@ -67,7 +66,14 @@ router.get('/detailed', async (req, res) => {
     res.json(healthcheck);
 });
 
-// Database-specific health check
-router.get('/database', createHealthCheck());
+// Database-specific health check - simplified
+router.get('/database', (req, res) => {
+    const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+    res.json({ 
+        success: dbStatus === 'connected',
+        status: dbStatus,
+        message: `Database ${dbStatus}`
+    });
+});
 
 module.exports = router;
