@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>העורך התורני</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Heebo', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8fafc;
+            color: #2c3e50;
+            direction: rtl;
+            overflow: hidden;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            z-index: 2000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .top-nav.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #3b82f6;
+            text-decoration: none;
+        }
+
+        .nav-tabs {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            padding: 8px 16px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Heebo', sans-serif;
+            font-size: 0.85rem;
+            color: #374151;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: #f8fafc;
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-tab:hover {
+            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .nav-tab.active {
+            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background: #3b82f6;
+            border-radius: 2px;
+        }
+
+        /* Main Layout */
+        .editor-container {
+            display: grid;
+            grid-template-areas: 
+                "left-sidebar main-editor right-sidebar"
+                "bottom-controls bottom-controls bottom-controls";
+            grid-template-columns: 250px 1fr 250px;
+            grid-template-rows: 1fr 60px;
+            height: calc(100vh - 60px);
+            gap: 1px;
+            background: #e2e8f0;
+        }
+
+        /* Central Text Editor */
+        .main-editor {
+            grid-area: main-editor;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .editor-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .word-count {
+            font-size: 0.85rem;
+            color: #64748b;
+            background: #f1f5f9;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .text-editor {
+            flex: 1;
+            padding: 20px;
+            border: none;
+            outline: none;
+            font-family: 'Heebo', serif;
+            font-size: 16px;
+            line-height: 1.8;
+            color: #2c3e50;
+            resize: none;
+            background: white;
+            direction: rtl;
+        }
+
+        .text-editor:focus {
+            box-shadow: inset 0 0 0 2px #3b82f6;
+        }
+
+        /* Selection Indicator */
+        .selection-info {
+            background: #fbbf24;
+            color: #92400e;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .selection-info.active {
+            display: flex;
+        }
+
+        /* Processing Mode Toggle */
+        .mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f3f4f6;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+        .mode-toggle label {
+            font-size: 0.85rem;
+            color: #4b5563;
+            font-weight: 500;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background: #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #3b82f6;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(26px);
+        }
+
+        .mode-text {
+            font-size: 0.85rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        /* Right Sidebar - Primary Tools */
+        .right-sidebar {
+            grid-area: right-sidebar;
+            background: white;
+            border-left: 1px solid #e2e8f0;
+            overflow-y: auto;
+            animation: slideIn 0.8s ease-out;
+            animation-delay: 0.2s;
+            animation-fill-mode: both;
+        }
+
+        .sidebar-header {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #374151;
+        }
+
+        .tool-group {
+            padding: 15px;
+            border-bottom: 1px solid #f1f5f9;
+            animation: fadeInUp 0.6s ease-out;
+            animation-delay: 0.2s;
+            animation-fill-mode: both;
+        }
+
+        .tool-group:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .tool-group:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        .tool-group h4 {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tool-btn {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Heebo', sans-serif;
+            font-size: 0.85rem;
+            color: #374151;
+            transition: all 0.2s;
+            text-align: right;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .tool-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .tool-btn:hover::before {
+            left: 100%;
+        }
+
+        .tool-btn:hover {
+            background: #f8fafc;
+            border-color: #3b82f6;
+            color: #3b82f6;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+        }
+
+        .tool-btn:active {
+            transform: translateY(0);
+        }
+
+        .tool-btn i {
+            width: 16px;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        /* Left Sidebar - Advanced Tools */
+        .left-sidebar {
+            grid-area: left-sidebar;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            overflow-y: auto;
+            animation: slideIn 0.8s ease-out;
+        }
+
+        /* Bottom Controls */
+        .bottom-controls {
+            grid-area: bottom-controls;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .control-btn {
+            padding: 8px 16px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Heebo', sans-serif;
+            font-size: 0.85rem;
+            color: #374151;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .control-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .control-btn:hover::before {
+            left: 100%;
+        }
+
+        .control-btn:hover {
+            background: #f8fafc;
+            border-color: #3b82f6;
+            color: #3b82f6;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+        }
+
+        .control-btn:active {
+            transform: translateY(0);
+        }
+
+        .control-btn.primary {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        .control-btn.primary:hover {
+            background: #2563eb;
+        }
+
+        /* Chat Sidebar (Initially Hidden) */
+        .chat-sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100vh;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            transition: left 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-sidebar.open {
+            left: 0;
+        }
+
+        .chat-header {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .chat-input-area {
+            padding: 15px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-family: 'Heebo', sans-serif;
+            font-size: 0.9rem;
+            direction: rtl;
+        }
+
+        .chat-toggle {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+        }
+
+        .chat-toggle:hover {
+            background: #2563eb;
+            transform: scale(1.05);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .editor-container {
+                grid-template-areas: 
+                    "main-editor"
+                    "bottom-controls";
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr 60px;
+            }
+
+            .left-sidebar, .right-sidebar {
+                display: none;
+            }
+
+            .chat-sidebar {
+                width: 100%;
+                left: -100%;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #f3f4f6;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* הנפשות מהעורך הקלאסי */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Diff Highlight Styles */
+        .text-added {
+            background-color: #86efac;
+            text-decoration: underline;
+            text-decoration-color: #16a34a;
+        }
+
+        .text-removed {
+            background-color: #fca5a5;
+            text-decoration: line-through;
+            text-decoration-color: #dc2626;
+        }
+
+        .text-modified {
+            background-color: #fde047;
+            border-bottom: 2px solid #facc15;
+        }
+
+        /* Corrections Panel */
+        .corrections-panel {
+            position: fixed;
+            right: 20px;
+            top: 100px;
+            width: 300px;
+            max-height: 400px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            padding: 20px;
+            overflow-y: auto;
+            z-index: 1500;
+            display: none;
+        }
+
+        .corrections-panel.active {
+            display: block;
+        }
+
+        .corrections-header {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1f2937;
+        }
+
+        .correction-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #f9fafb;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .correction-original {
+            color: #dc2626;
+            text-decoration: line-through;
+        }
+
+        .correction-new {
+            color: #16a34a;
+            font-weight: 500;
+        }
+
+        .correction-reason {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="top-nav" id="topNav">
+        <a href="/editor" class="nav-logo">מילה</a>
+        <div class="nav-tabs">
+            <a href="/classic-text-editor" class="nav-tab" onclick="setActiveTab(this)">הדרת ספרים</a>
+            <a href="#" class="nav-tab active" onclick="setActiveTab(this)">עורך חי</a>
+            <a href="/research-tools" class="nav-tab" onclick="setActiveTab(this)">כלי מחקר</a>
+        </div>
+        <div class="nav-actions">
+            <a href="#" class="nav-btn" onclick="showUserProfile()">
+                <i class="fas fa-user"></i>
+                פרופיל משתמש
+            </a>
+            <a href="#" class="nav-btn" onclick="showHistory()">
+                <i class="fas fa-history"></i>
+                היסטוריה
+            </a>
+        </div>
+    </nav>
+
+    <div class="editor-container">
+        <!-- Left Sidebar - Primary Tools -->
+        <div class="left-sidebar">
+            <div class="sidebar-header">כלים עיקריים</div>
+            
+            <div class="tool-group">
+                <button class="tool-btn" onclick="processText('punctuation')">
+                    <i class="fas fa-circle"></i>
+                    פיסוק
+                </button>
+                <button class="tool-btn" onclick="processText('nikud')">
+                    <i class="fas fa-language"></i>
+                    ניקוד
+                </button>
+                <button class="tool-btn" onclick="processText('headers')">
+                    <i class="fas fa-heading"></i>
+                    כותרות
+                </button>
+                <button class="tool-btn" onclick="processText('sources')">
+                    <i class="fas fa-bookmark"></i>
+                    מראי מקומות
+                </button>
+                <button class="tool-btn" onclick="smartProofread()">
+                    <i class="fas fa-spell-check"></i>
+                    הגהה
+                </button>
+                <button class="tool-btn" onclick="processText('grammar')">
+                    <i class="fas fa-check-circle"></i>
+                    תיקון דקדוק
+                </button>
+                <button class="tool-btn" onclick="processText('paragraphs')">
+                    <i class="fas fa-paragraph"></i>
+                    חלוקה לפסקאות
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Text Editor -->
+        <div class="main-editor">
+            <div class="editor-header">
+                <div class="editor-title">עורך הטקסט</div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div class="selection-info" id="selectionInfo">
+                        <i class="fas fa-highlighter"></i>
+                        <span id="selectionText">נבחרו 0 מילים</span>
+                    </div>
+                    <div class="mode-toggle">
+                        <label>עיבוד:</label>
+                        <span class="mode-text">מלא</span>
+                        <div class="toggle-switch" id="processingMode" onclick="toggleProcessingMode()">
+                            <div class="toggle-slider"></div>
+                        </div>
+                        <span class="mode-text">חלקי</span>
+                    </div>
+                    <div class="word-count" id="wordCount">0 מילים</div>
+                </div>
+            </div>
+            <textarea 
+                class="text-editor" 
+                id="textEditor" 
+                placeholder="הקלד או הדבק את הטקסט שלך כאן..."
+                oninput="updateWordCount()"
+            ></textarea>
+        </div>
+
+        <!-- Right Sidebar - Additional Tools -->
+        <div class="right-sidebar">
+            <div class="sidebar-header">כלים נוספים</div>
+            <div class="tool-group">
+                <p style="color: #6b7280; font-size: 0.85rem; padding: 15px; text-align: center;">
+                    כלים נוספים יתווספו בהמשך
+                </p>
+            </div>
+        </div>
+
+        <!-- Bottom Controls -->
+        <div class="bottom-controls">
+            <div class="control-group">
+                <button class="control-btn" onclick="undo()">
+                    <i class="fas fa-undo"></i>
+                    בטל
+                </button>
+                <button class="control-btn" onclick="redo()">
+                    <i class="fas fa-redo"></i>
+                    חזור
+                </button>
+            </div>
+
+            <div class="control-group">
+                <button class="control-btn" onclick="toggleView()">
+                    <i class="fas fa-eye"></i>
+                    תצוגה נקיה
+                </button>
+            </div>
+
+            <div class="control-group">
+                <button class="control-btn" onclick="alert('Test button works!')">
+                    <i class="fas fa-bug"></i>
+                    בדיקה
+                </button>
+                <button class="control-btn primary" onclick="saveText()">
+                    <i class="fas fa-save"></i>
+                    שמור
+                </button>
+                <button class="control-btn" onclick="downloadText()">
+                    <i class="fas fa-download"></i>
+                    הורד
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Toggle Button -->
+    <button class="chat-toggle" onclick="toggleChat()">
+        <i class="fas fa-comments"></i>
+    </button>
+
+    <!-- Chat Sidebar -->
+    <div class="chat-sidebar" id="chatSidebar">
+        <div class="chat-header">
+            <div>צ'אט עם המודל</div>
+            <button class="control-btn" onclick="toggleChat()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div style="color: #6b7280; font-size: 0.9rem; text-align: center; padding: 20px;">
+                שאל שאלות על הטקסט או בקש עזרה בעריכה
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <input 
+                type="text" 
+                class="chat-input" 
+                id="chatInput" 
+                placeholder="שאל שאלה..."
+                onkeypress="if(event.key==='Enter') sendMessage()"
+            >
+        </div>
+    </div>
+
+    <script>
+        // Text Editor State
+        let textHistory = [];
+        let historyIndex = -1;
+        let isProcessing = false;
+        let processingMode = 'full'; // 'full' or 'partial'
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            handleOAuthToken();
+            checkAuthentication();
+            const editor = document.getElementById('textEditor');
+            saveState();
+            initializeNavigation();
+            initializeSelectionTracking();
+            console.log('Page loaded successfully');
+        });
+
+        // Navigation Functions
+        function initializeNavigation() {
+            // Handle scroll effect for top navigation
+            window.addEventListener('scroll', function() {
+                const topNav = document.getElementById('topNav');
+                if (window.scrollY > 10) {
+                    topNav.classList.add('scrolled');
+                } else {
+                    topNav.classList.remove('scrolled');
+                }
+            });
+        }
+
+        function setActiveTab(clickedTab) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Add active class to clicked tab
+            clickedTab.classList.add('active');
+            
+            // Prevent default navigation for the current page
+            if (clickedTab.textContent.trim() === 'עורך') {
+                event.preventDefault();
+                return false;
+            }
+        }
+
+        // Selection Tracking
+        function initializeSelectionTracking() {
+            const editor = document.getElementById('textEditor');
+            
+            // Track selection changes
+            editor.addEventListener('mouseup', updateSelectionInfo);
+            editor.addEventListener('keyup', updateSelectionInfo);
+            
+            // Update selection info initially
+            updateSelectionInfo();
+        }
+
+        function updateSelectionInfo() {
+            const editor = document.getElementById('textEditor');
+            const selectionInfo = document.getElementById('selectionInfo');
+            const selectionText = document.getElementById('selectionText');
+            
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            const selectedText = editor.value.substring(start, end);
+            
+            if (selectedText.length > 0) {
+                const wordCount = selectedText.trim().split(/\s+/).filter(w => w).length;
+                selectionInfo.classList.add('active');
+                selectionText.textContent = `נבחרו ${wordCount} מילים`;
+            } else {
+                selectionInfo.classList.remove('active');
+            }
+        }
+
+        // Processing Mode Toggle
+        function toggleProcessingMode() {
+            const toggle = document.getElementById('processingMode');
+            toggle.classList.toggle('active');
+            processingMode = toggle.classList.contains('active') ? 'partial' : 'full';
+            console.log('Processing mode:', processingMode);
+        }
+
+        // Get selected text or full text based on mode
+        function getTextToProcess() {
+            const editor = document.getElementById('textEditor');
+            
+            if (processingMode === 'partial') {
+                const start = editor.selectionStart;
+                const end = editor.selectionEnd;
+                const selectedText = editor.value.substring(start, end);
+                
+                if (selectedText.trim()) {
+                    return {
+                        text: selectedText,
+                        isPartial: true,
+                        start: start,
+                        end: end,
+                        fullText: editor.value
+                    };
+                }
+            }
+            
+            return {
+                text: editor.value,
+                isPartial: false,
+                start: 0,
+                end: editor.value.length,
+                fullText: editor.value
+            };
+        }
+
+        // Smart Proofreading - Merges corrections into existing text
+        async function smartProofread() {
+            console.log('smartProofread called');
+            if (isProcessing) return;
+            
+            const editor = document.getElementById('textEditor');
+            const text = editor.value.trim();
+            
+            if (!text) {
+                alert('אנא הכנס טקסט להגהה');
+                return;
+            }
+
+            isProcessing = true;
+            const originalText = editor.value;
+
+            try {
+                showLoading('proofreading');
+
+                // Simpler approach - ask for direct text correction with minimal changes
+                const prompt = `תקן את הטקסט הבא בצורה זהירה ומינימלית. תקן רק שגיאות ברורות של כתיב, דקדוק או פיסוק. אל תשנה ניסוח או סגנון. החזר את הטקסט המתוקן:
+
+${text}`;
+
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: prompt,
+                        action: 'proofread'
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    const correctedText = data.response.trim();
+                    
+                    // Compare texts to see if there were changes
+                    if (correctedText !== originalText.trim()) {
+                        // Find and highlight differences
+                        const differences = findSimpleDifferences(originalText, correctedText);
+                        
+                        saveState();
+                        editor.value = correctedText;
+                        updateWordCount();
+                        
+                        if (differences.length > 0) {
+                            // Show summary of what was changed
+                            const summary = differences.slice(0, 10).map(d => `• ${d}`).join('\n');
+                            const moreText = differences.length > 10 ? `\n... ועוד ${differences.length - 10} שינויים` : '';
+                            alert(`בוצעו ${differences.length} תיקונים:\n${summary}${moreText}`);
+                        } else {
+                            alert('הטקסט תוקן 📝');
+                        }
+                    } else {
+                        alert('לא נמצאו שגיאות בטקסט! 🎉');
+                    }
+                } else {
+                    alert('שגיאה: ' + data.error);
+                }
+            } catch (error) {
+                console.error('שגיאה:', error);
+                alert('שגיאה בהגהה');
+            } finally {
+                isProcessing = false;
+                hideLoading();
+            }
+        }
+
+        // Helper function to escape regex special characters
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        // Quick spell check function
+        async function quickSpellCheck() {
+            console.log('quickSpellCheck called');
+            if (isProcessing) return;
+            
+            const editor = document.getElementById('textEditor');
+            const text = editor.value.trim();
+            
+            if (!text) {
+                alert('אנא הכנס טקסט לבדיקה');
+                return;
+            }
+
+            isProcessing = true;
+            const originalText = editor.value;
+
+            try {
+                showLoading('spelling');
+
+                const prompt = `בדוק כתיב בעברית בטקסט הבא ותקן רק שגיאות כתיב ברורות. אל תשנה דקדוק או ניסוח:
+
+${text}`;
+
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: prompt,
+                        action: 'spelling'
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    const correctedText = data.response.trim();
+                    
+                    if (correctedText !== originalText.trim()) {
+                        saveState();
+                        editor.value = correctedText;
+                        updateWordCount();
+                        alert('תוקן כתיב ✓');
+                    } else {
+                        alert('לא נמצאו שגיאות כתיב 📝');
+                    }
+                } else {
+                    alert('שגיאה: ' + data.error);
+                }
+            } catch (error) {
+                console.error('שגיאה:', error);
+                alert('שגיאה בבדיקת כתיב');
+            } finally {
+                isProcessing = false;
+                hideLoading();
+            }
+        }
+
+        // Simple function to find basic differences
+        function findSimpleDifferences(original, corrected) {
+            const differences = [];
+            
+            // Split by sentences or major punctuation
+            const originalSentences = original.split(/[.!?]+/).filter(s => s.trim());
+            const correctedSentences = corrected.split(/[.!?]+/).filter(s => s.trim());
+            
+            // If number of sentences is very different, just return a general message
+            if (Math.abs(originalSentences.length - correctedSentences.length) > 2) {
+                differences.push('שונו מבנה וארגון הטקסט');
+                return differences;
+            }
+            
+            // Compare sentence by sentence
+            for (let i = 0; i < Math.max(originalSentences.length, correctedSentences.length); i++) {
+                const origSent = originalSentences[i] ? originalSentences[i].trim() : '';
+                const corrSent = correctedSentences[i] ? correctedSentences[i].trim() : '';
+                
+                if (origSent !== corrSent && origSent && corrSent) {
+                    // Find word-level differences
+                    const origWords = origSent.split(/\s+/);
+                    const corrWords = corrSent.split(/\s+/);
+                    
+                    for (let j = 0; j < Math.max(origWords.length, corrWords.length); j++) {
+                        const origWord = origWords[j] || '';
+                        const corrWord = corrWords[j] || '';
+                        
+                        if (origWord !== corrWord && origWord && corrWord) {
+                            differences.push(`"${origWord}" → "${corrWord}"`);
+                        }
+                    }
+                }
+            }
+            
+            return differences;
+        }
+
+        // Handle OAuth token from URL parameter
+        function handleOAuthToken() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            
+            if (token) {
+                localStorage.setItem('authToken', token);
+                // Clean URL
+                window.history.replaceState({}, document.title, '/');
+                console.log('OAuth token saved');
+            }
+        }
+
+        // Check if user is authenticated
+        function checkAuthentication() {
+            const token = localStorage.getItem('authToken') || localStorage.getItem('adminToken');
+            
+            if (!token) {
+                // For testing, allow access without token
+                console.log('No token found, but allowing access for testing');
+                return;
+            }
+
+            // Verify token with server
+            fetch('/api/auth/profile', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    // Token invalid, but allow access for testing
+                    console.log('Invalid token, but allowing access for testing');
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('adminToken');
+                } else {
+                    console.log('User authenticated:', data.data.user.email);
+                }
+            })
+            .catch(error => {
+                console.error('Auth check failed:', error);
+                // Allow access even if auth check fails
+                console.log('Auth check failed, but allowing access for testing');
+            });
+        }
+
+        // Word Count
+        function updateWordCount() {
+            const text = document.getElementById('textEditor').value;
+            const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+            document.getElementById('wordCount').textContent = `${wordCount} מילים`;
+        }
+
+        // History Management
+        function saveState() {
+            const text = document.getElementById('textEditor').value;
+            if (historyIndex < textHistory.length - 1) {
+                textHistory = textHistory.slice(0, historyIndex + 1);
+            }
+            textHistory.push(text);
+            historyIndex = textHistory.length - 1;
+        }
+
+        function undo() {
+            console.log('undo called');
+            if (historyIndex > 0) {
+                historyIndex--;
+                document.getElementById('textEditor').value = textHistory[historyIndex];
+                updateWordCount();
+            }
+        }
+
+        function redo() {
+            if (historyIndex < textHistory.length - 1) {
+                historyIndex++;
+                document.getElementById('textEditor').value = textHistory[historyIndex];
+                updateWordCount();
+            }
+        }
+
+        // Text Processing
+        async function processText(action) {
+            console.log('processText called with action:', action);
+            if (isProcessing) return;
+            
+            const editor = document.getElementById('textEditor');
+            const processData = getTextToProcess();
+            
+            if (!processData.text.trim()) {
+                alert('אנא הכנס טקסט לעיבוד או בחר טקסט לעיבוד חלקי');
+                return;
+            }
+
+            isProcessing = true;
+            const originalText = editor.value;
+
+            try {
+                // Show loading
+                showLoading(action, processData.isPartial);
+
+                // Create appropriate prompt based on mode
+                let prompt = '';
+                if (processData.isPartial) {
+                    prompt = getPartialPromptForAction(action, processData.text);
+                } else {
+                    prompt = getPromptForAction(action, processData.text);
+                }
+
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: prompt,
+                        action: action,
+                        isPartial: processData.isPartial
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    saveState();
+                    
+                    if (processData.isPartial) {
+                        // For partial processing, replace only the selected portion
+                        const newText = 
+                            processData.fullText.substring(0, processData.start) +
+                            data.response +
+                            processData.fullText.substring(processData.end);
+                        editor.value = newText;
+                        
+                        // Restore selection to the processed text
+                        editor.setSelectionRange(
+                            processData.start,
+                            processData.start + data.response.length
+                        );
+                    } else {
+                        // For full processing, replace entire text
+                        editor.value = data.response;
+                    }
+                    
+                    updateWordCount();
+                    updateSelectionInfo();
+                } else {
+                    alert('שגיאה: ' + data.error);
+                }
+            } catch (error) {
+                console.error('שגיאה:', error);
+                alert('שגיאה בעיבוד הטקסט');
+            } finally {
+                isProcessing = false;
+                hideLoading();
+            }
+        }
+
+        // Format Text
+        function formatText(format) {
+            console.log('formatText called with format:', format);
+            const editor = document.getElementById('textEditor');
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            const selectedText = editor.value.substring(start, end);
+            
+            if (!selectedText) {
+                alert('אנא בחר טקסט לעיצוב');
+                return;
+            }
+
+            let formattedText;
+            switch(format) {
+                case 'bold':
+                    formattedText = `**${selectedText}**`;
+                    break;
+                case 'italic':
+                    formattedText = `*${selectedText}*`;
+                    break;
+                case 'list':
+                    formattedText = selectedText.split('\n').map(line => `• ${line}`).join('\n');
+                    break;
+                default:
+                    return;
+            }
+
+            saveState();
+            editor.value = editor.value.substring(0, start) + formattedText + editor.value.substring(end);
+            updateWordCount();
+        }
+
+        // Rewrite Text
+        async function rewriteText(style) {
+            const editor = document.getElementById('textEditor');
+            const text = editor.value.trim();
+            
+            if (!text) {
+                alert('אנא הכנס טקסט לשכתוב');
+                return;
+            }
+
+            const stylePrompts = {
+                'academic': 'שכתב את הטקסט הבא בסגנון אקדמי מקצועי',
+                'rabbinical': 'שכתב את הטקסט הבא בסגנון דרשני ותורני',
+                'literary': 'שכתב את הטקסט הבא בסגנון ספרותי ויפה'
+            };
+
+            if (isProcessing) return;
+            
+            isProcessing = true;
+            const originalText = editor.value;
+
+            try {
+                showLoading('rewrite');
+
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: `${stylePrompts[style]}: ${text}`,
+                        action: 'rewrite'
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    saveState();
+                    editor.value = data.response;
+                    updateWordCount();
+                } else {
+                    alert('שגיאה: ' + data.error);
+                }
+            } catch (error) {
+                console.error('שגיאה:', error);
+                alert('שגיאה בעיבוד הטקסט');
+            } finally {
+                isProcessing = false;
+                hideLoading();
+            }
+        }
+
+        // Get Prompt for Action
+        function getPromptForAction(action, text) {
+            const prompts = {
+                'punctuation': `הוסף פיסוק מדויק לטקסט הבא: ${text}`,
+                'nikud': `הוסף ניקוד מלא לטקסט הבא: ${text}`,
+                'nikud-partial': `הוסף ניקוד חלקי (רק למילים המסופקות) לטקסט הבא: ${text}`,
+                'paragraphs': `חלק את הטקסט הבא לפסקאות לוגיות: ${text}`,
+                'headers': `הוסף כותרות פרקים ומשנה מתאימות לטקסט הבא: ${text}`,
+                'sources': `הוסף מראי מקומות רלוונטיים לטקסט הבא: ${text}`,
+                'index': `צור אינדקס נושאים לטקסט הבא: ${text}`,
+                'simplify': `פשט את הטקסט הבא תוך שמירה על התוכן: ${text}`,
+                'expand': `הרחב והעמק את הטקסט הבא: ${text}`,
+                'comments': `הוסף ביאורים והערות מועילות לטקסט הבא: ${text}`,
+                'compare': `נתח וערוך את הטקסט הבא: ${text}`
+            };
+            
+            return prompts[action] || text;
+        }
+
+        // Advanced Text Merging - for intelligent corrections
+        async function intelligentMerge(action, originalText) {
+            console.log('intelligentMerge called for action:', action);
+            
+            try {
+                // Create a special prompt that requests minimal changes
+                let prompt = '';
+                
+                switch(action) {
+                    case 'punctuation':
+                        prompt = `קרא את הטקסט הבא והוסף אך ורק סימני פיסוק חסרים (נקודות, פסיקים, נקודותיים וכו').
+                        החזר את הטקסט המלא עם הפיסוק החדש, אך אל תשנה שום דבר אחר - לא מילים, לא סדר, לא ניסוח.
+                        טקסט: ${originalText}`;
+                        break;
+                        
+                    case 'spelling':
+                        prompt = `תקן אך ורק שגיאות כתיב בטקסט הבא. אל תשנה ניסוח, סגנון או מבנה.
+                        החזר את הטקסט עם תיקוני הכתיב בלבד.
+                        טקסט: ${originalText}`;
+                        break;
+                        
+                    case 'grammar':
+                        prompt = `תקן אך ורק שגיאות דקדוק בטקסט הבא (זכר/נקבה, יחיד/רבים, זמנים).
+                        שמור על הניסוח המקורי ככל האפשר, תקן רק שגיאות דקדוקיות ברורות.
+                        טקסט: ${originalText}`;
+                        break;
+                        
+                    default:
+                        prompt = `עבד את הטקסט הבא בצורה מינימלית - שנה רק את הנדרש ל${action}.
+                        שמור על רוב הטקסט המקורי ללא שינוי.
+                        טקסט: ${originalText}`;
+                }
+                
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: prompt,
+                        action: action
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Compare and highlight differences
+                    const differences = findDifferences(originalText, data.response);
+                    return {
+                        success: true,
+                        mergedText: data.response,
+                        differences: differences
+                    };
+                }
+                
+                return { success: false, error: data.error };
+                
+            } catch (error) {
+                console.error('Error in intelligentMerge:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Find differences between two texts
+        function findDifferences(original, corrected) {
+            const originalWords = original.split(/(\s+)/);
+            const correctedWords = corrected.split(/(\s+)/);
+            const differences = [];
+            
+            let i = 0, j = 0;
+            
+            while (i < originalWords.length || j < correctedWords.length) {
+                if (i >= originalWords.length) {
+                    // Added words at the end
+                    differences.push({
+                        type: 'added',
+                        text: correctedWords[j],
+                        position: j
+                    });
+                    j++;
+                } else if (j >= correctedWords.length) {
+                    // Removed words at the end
+                    differences.push({
+                        type: 'removed',
+                        text: originalWords[i],
+                        position: i
+                    });
+                    i++;
+                } else if (originalWords[i] === correctedWords[j]) {
+                    // Same word
+                    i++;
+                    j++;
+                } else {
+                    // Different word
+                    differences.push({
+                        type: 'modified',
+                        original: originalWords[i],
+                        corrected: correctedWords[j],
+                        position: i
+                    });
+                    i++;
+                    j++;
+                }
+            }
+            
+            return differences;
+        }
+
+        // Get Partial Prompt for Action (for selected text only)
+        function getPartialPromptForAction(action, text) {
+            const prompts = {
+                'punctuation': `הוסף פיסוק לטקסט הבא, החזר את הטקסט עם פיסוק: ${text}`,
+                'nikud': `הוסף ניקוד לטקסט הבא: ${text}`,
+                'nikud-partial': `הוסף ניקוד חלקי לטקסט הבא: ${text}`,
+                'paragraphs': `חלק את הטקסט הבא לפסקאות: ${text}`,
+                'headers': `הוסף כותרת מתאימה לטקסט הבא: ${text}`,
+                'sources': `הוסף מראי מקומות לטקסט הבא: ${text}`,
+                'index': `צור רשימת נושאים לטקסט הבא: ${text}`,
+                'simplify': `פשט את הטקסט הבא: ${text}`,
+                'expand': `הרחב את הטקסט הבא: ${text}`,
+                'comments': `הוסף הערות לטקסט הבא: ${text}`,
+                'grammar': `תקן דקדוק בטקסט הבא: ${text}`
+            };
+            
+            return prompts[action] || text;
+        }
+
+        // Chat Functions
+        function toggleChat() {
+            console.log('toggleChat called');
+            const chatSidebar = document.getElementById('chatSidebar');
+            chatSidebar.classList.toggle('open');
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            const messagesContainer = document.getElementById('chatMessages');
+            
+            // Get the current text from the editor
+            const editorText = document.getElementById('textEditor').value.trim();
+            
+            // Add user message
+            messagesContainer.innerHTML += `
+                <div style="margin-bottom: 15px; text-align: right;">
+                    <div style="background: #3b82f6; color: white; padding: 10px; border-radius: 12px; display: inline-block; max-width: 80%;">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            
+            input.value = '';
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            try {
+                // Include the editor text as context in the message
+                let contextMessage = message;
+                if (editorText) {
+                    contextMessage = `בהתייחס לטקסט הבא:\n\n${editorText}\n\nשאלה: ${message}`;
+                }
+
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: contextMessage,
+                        action: 'custom',
+                        contextText: editorText
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    messagesContainer.innerHTML += `
+                        <div style="margin-bottom: 15px;">
+                            <div style="background: #f1f5f9; padding: 10px; border-radius: 12px; display: inline-block; max-width: 80%;">
+                                ${data.response}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    messagesContainer.innerHTML += `
+                        <div style="margin-bottom: 15px;">
+                            <div style="background: #fef2f2; color: #dc2626; padding: 10px; border-radius: 12px; display: inline-block; max-width: 80%;">
+                                שגיאה: ${data.error}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            } catch (error) {
+                console.error('שגיאה בשליחת הודעה:', error);
+            }
+        }
+
+        // Utility Functions
+        function showLoading(action, isPartial = false) {
+            const editor = document.getElementById('textEditor');
+            editor.style.opacity = '0.5';
+            editor.disabled = true;
+            
+            // Show loading message
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'loadingIndicator';
+            loadingDiv.style.cssText = `
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                z-index: 1000;
+            `;
+            
+            const loadingText = isPartial ? 'מעבד את הטקסט המסומן...' : 'מעבד טקסט...';
+            loadingDiv.innerHTML = `
+                <div class="loading"></div>
+                <span>${loadingText}</span>
+            `;
+            
+            document.querySelector('.main-editor').appendChild(loadingDiv);
+        }
+
+        function hideLoading() {
+            const editor = document.getElementById('textEditor');
+            editor.style.opacity = '1';
+            editor.disabled = false;
+            
+            const loadingDiv = document.getElementById('loadingIndicator');
+            if (loadingDiv) {
+                loadingDiv.remove();
+            }
+        }
+
+        function toggleView() {
+            // Toggle between clean and marked view
+        }
+
+        function saveText() {
+            const text = document.getElementById('textEditor').value;
+            localStorage.setItem('savedText', text);
+            alert('הטקסט נשמר בהצלחה!');
+        }
+
+        function downloadText() {
+            const text = document.getElementById('textEditor').value;
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'text-document.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function analyzeText() {
+            const text = document.getElementById('textEditor').value;
+            const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+            const chars = text.length;
+            const sentences = text.split(/[.!?]+/).filter(s => s.trim()).length;
+            const paragraphs = text.split('\n\n').filter(p => p.trim()).length;
+
+            alert(`סטטיסטיקות הטקסט:
+מילים: ${words}
+תווים: ${chars}
+משפטים: ${sentences}
+פסקאות: ${paragraphs}`);
+        }
+
+        function showUserProfile() {
+            alert('פתיחת פרופיל משתמש - תכונה בפיתוח');
+        }
+
+        function showHistory() {
+            alert('פתיחת היסטוריית עבודה - תכונה בפיתוח');
+        }
+    </script>
+</body>
+</html>

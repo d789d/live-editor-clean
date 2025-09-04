@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>לוח ניהול - העורך התורני</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Heebo', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* 🔒 Security Notice */
+        .security-header {
+            background: linear-gradient(90deg, #dc3545, #fd7e14);
+            color: white;
+            padding: 8px 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 12px;
+            box-shadow: 0 2px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        /* Navigation */
+        .admin-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .admin-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .admin-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: #666;
+            background: #e3f2fd;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-top: 2px;
+            display: inline-block;
+        }
+
+        .logout-btn {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+        }
+
+        /* Main Layout */
+        .admin-container {
+            display: flex;
+            min-height: calc(100vh - 120px);
+        }
+
+        .admin-sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            margin: 20px;
+            border-radius: 15px;
+            padding: 25px 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin: 5px 15px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 20px;
+            color: #555;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            transform: translateX(-5px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .sidebar-menu .icon {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .admin-content {
+            flex: 1;
+            margin: 20px 20px 20px 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .content-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .content-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .content-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .card-icon.users { background: linear-gradient(45deg, #28a745, #20c997); }
+        .card-icon.conversations { background: linear-gradient(45deg, #17a2b8, #007bff); }
+        .card-icon.prompts { background: linear-gradient(45deg, #fd7e14, #ffc107); }
+        .card-icon.logs { background: linear-gradient(45deg, #6f42c1, #e83e8c); }
+
+        .card-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .card-change {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .card-change.positive { color: #28a745; }
+        .card-change.negative { color: #dc3545; }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .data-table th {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            text-align: right;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9ff;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Security Indicators */
+        .security-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .security-badge.high {
+            background: #dc3545;
+            color: white;
+        }
+
+        .security-badge.medium {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .security-badge.low {
+            background: #28a745;
+            color: white;
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e9ecef;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-container {
+                flex-direction: column;
+            }
+            
+            .admin-sidebar {
+                width: 100%;
+                margin: 10px;
+            }
+            
+            .admin-content {
+                margin: 10px;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Hidden by default */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Security Warning */
+        .security-warning {
+            background: linear-gradient(45deg, #dc3545, #fd7e14);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .modal-content form {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #218838, #1ea471);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c82333, #a02622);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        /* Data Table Improvements */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px 15px;
+            text-align: right;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f8f9ff;
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #e83e8c;
+        }
+    </style>
+</head>
+<body>
+    <!-- 🔒 Security Header -->
+    <div class="security-header">
+        🔒 מערכת ניהול מאובטחת - כניסה למנהלים בלבד - כל הפעילות מתועדת
+    </div>
+
+    <!-- Navigation -->
+    <nav class="admin-nav">
+        <div class="admin-logo">
+            <i class="fas fa-shield-alt"></i>
+            <h1>לוח ניהול</h1>
+        </div>
+        <div class="admin-user">
+            <div class="user-info">
+                <div class="user-name" id="userName">טוען...</div>
+                <div class="user-role" id="userRole">מנהל</div>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> התנתק
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="#" class="menu-item active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt icon"></i>
+                        דשבורד
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="menu-item" data-section="users">
+                        <i class="fas fa-users icon"></i>
+                        ניהול משתמשים
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="menu-item" data-section="prompts">
+                        <i class="fas fa-code icon"></i>
+                        ניהול פרומפטים
+                        <span class="security-badge high">רגיש</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="menu-item" data-section="conversations">
+                        <i class="fas fa-comments icon"></i>
+                        ניהול שיחות
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="menu-item" data-section="logs">
+                        <i class="fas fa-list-alt icon"></i>
+                        לוגי פעילות
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="menu-item" data-section="analytics">
+                        <i class="fas fa-chart-bar icon"></i>
+                        אנליטיקות
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="menu-item" data-section="settings">
+                        <i class="fas fa-cog icon"></i>
+                        הגדרות מערכת
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="content-header">
+                    <h2 class="content-title">דשבורד ניהול</h2>
+                    <p class="content-subtitle">סקירה כללית של המערכת</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <span class="card-title">סך משתמשים</span>
+                            <div class="card-icon users">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="card-value" id="totalUsers">-</div>
+                        <div class="card-change positive" id="usersChange">+0%</div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <span class="card-title">שיחות פעילות</span>
+                            <div class="card-icon conversations">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                        </div>
+                        <div class="card-value" id="totalConversations">-</div>
+                        <div class="card-change positive" id="conversationsChange">+0%</div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <span class="card-title">פרומפטים פעילים</span>
+                            <div class="card-icon prompts">
+                                <i class="fas fa-code"></i>
+                            </div>
+                        </div>
+                        <div class="card-value" id="totalPrompts">-</div>
+                        <div class="card-change positive" id="promptsChange">+0%</div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <span class="card-title">אירועי אבטחה (24 שעות)</span>
+                            <div class="card-icon logs">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                        </div>
+                        <div class="card-value" id="securityEvents">-</div>
+                        <div class="card-change" id="securityChange">רגילה</div>
+                    </div>
+                </div>
+
+                <div class="security-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    כל פעולות הניהול מתועדות במערכת הלוגים ונשמרות לצרכי ביקורת ואבטחה
+                </div>
+
+                <div id="recentActivity">
+                    <h3>פעילות אחרונה</h3>
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Users Section -->
+            <section id="users" class="content-section">
+                <div class="content-header">
+                    <h2 class="content-title">ניהול משתמשים</h2>
+                    <p class="content-subtitle">צפייה וניהול של כל המשתמשים במערכת</p>
+                </div>
+
+                <div id="usersContent">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 🔒 CRITICAL: Prompts Section -->
+            <section id="prompts" class="content-section">
+                <div class="content-header">
+                    <h2 class="content-title">🔒 ניהול פרומפטים (רגיש)</h2>
+                    <p class="content-subtitle">ניהול הוראות המערכת - גישה למנהלי-על בלבד</p>
+                </div>
+
+                <div class="security-warning">
+                    <i class="fas fa-lock"></i>
+                    אזור רגיש - פרומפטים מוצפנים ומוגנים. כל שינוי מתועד ומאושר.
+                </div>
+
+                <div id="promptsContent">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Conversations Section -->
+            <section id="conversations" class="content-section">
+                <div class="content-header">
+                    <h2 class="content-title">ניהול שיחות</h2>
+                    <p class="content-subtitle">צפייה וניהול שיחות משתמשים</p>
+                </div>
+
+                <div id="conversationsContent">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Logs Section -->
+            <section id="logs" class="content-section">
+                <div class="content-header">
+                    <h2 class="content-title">לוגי פעילות</h2>
+                    <p class="content-subtitle">מעקב אחר כל פעולות המערכת</p>
+                </div>
+
+                <div id="logsContent">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section id="analytics" class="content-section">
+                <div class="content-header">
+                    <h2 class="content-title">אנליטיקות מערכת</h2>
+                    <p class="content-subtitle">דוחות וסטטיסטיקות מתקדמות</p>
+                </div>
+
+                <div id="analyticsContent">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="content-section">
+                <div class="content-header">
+                    <h2 class="content-title">הגדרות מערכת</h2>
+                    <p class="content-subtitle">תצורה ובקרה של המערכת</p>
+                </div>
+
+                <div id="settingsContent">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // 🔒 SECURITY: Global variables
+        let authToken = localStorage.getItem('adminToken');
+        let currentUser = null;
+        const API_BASE = '/api';
+
+        // Handle OAuth token from URL parameter
+        function handleOAuthToken() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            
+            if (token) {
+                localStorage.setItem('adminToken', token);
+                authToken = token;
+                // Clean URL
+                window.history.replaceState({}, document.title, '/admin.html');
+                console.log('OAuth admin token saved');
+            }
+        }
+
+        // 🔒 Security check on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            handleOAuthToken();
+            
+            // For development - clear old tokens and use test token
+            if (window.location.hostname === 'localhost') {
+                console.warn('Development mode: Using test auth');
+                localStorage.removeItem('adminToken'); // Clear old token
+                authToken = 'dev-test-token';
+                localStorage.setItem('adminToken', authToken);
+            }
+            
+            if (!authToken) {
+                redirectToLogin();
+                return;
+            }
+
+            initializeAdmin();
+        });
+
+        // 🔒 Initialize admin dashboard
+        async function initializeAdmin() {
+            try {
+                // For development - simplified user creation
+                if (authToken === 'dev-test-token' || window.location.hostname === 'localhost') {
+                    // Development mode - create mock admin user
+                    currentUser = {
+                        id: 'dev-admin-id',
+                        email: 'admin@localhost.com',
+                        role: 'admin',
+                        firstName: 'מנהל',
+                        lastName: 'מערכת',
+                        fullName: 'מנהל מערכת פיתוח'
+                    };
+                    console.log('Development mode: Using mock admin user');
+                } else if (authToken) {
+                    try {
+                        // Try to decode token
+                        const payload = JSON.parse(atob(authToken.split('.')[1]));
+                        currentUser = {
+                            id: payload.userId,
+                            email: payload.email,
+                            role: payload.role,
+                            firstName: 'מנהל',
+                            lastName: 'מערכת',
+                            fullName: 'מנהל מערכת'
+                        };
+                        
+                        // Check if user is admin
+                        if (currentUser.role !== 'admin') {
+                            alert('גישה נדחתה - נדרשות הרשאות מנהל');
+                            redirectToLogin();
+                            return;
+                        }
+                    } catch (e) {
+                        // If token decode fails, use fallback admin for development
+                        if (window.location.hostname === 'localhost') {
+                            currentUser = {
+                                id: 'fallback-admin',
+                                email: 'admin@localhost.com',
+                                role: 'admin',
+                                firstName: 'מנהל',
+                                lastName: 'מערכת',
+                                fullName: 'מנהל מערכת (fallback)'
+                            };
+                            console.warn('Using fallback admin user for development');
+                        } else {
+                            throw new Error('Token decode failed');
+                        }
+                    }
+                } else {
+                    throw new Error('No token');
+                }
+
+                // Update UI with user info
+                document.getElementById('userName').textContent = currentUser.fullName;
+                document.getElementById('userRole').textContent = 'מנהל מערכת';
+
+                // Load dashboard data
+                loadDashboardData();
+                
+                // Setup navigation
+                setupNavigation();
+
+                console.log('🔒 Admin session initialized securely');
+
+            } catch (error) {
+                console.error('🚨 Admin initialization failed:', error);
+                redirectToLogin();
+            }
+        }
+
+        // Navigation setup
+        function setupNavigation() {
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    // Remove active class from all items
+                    menuItems.forEach(mi => mi.classList.remove('active'));
+                    
+                    // Add active class to clicked item
+                    item.classList.add('active');
+                    
+                    // Hide all sections
+                    document.querySelectorAll('.content-section').forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    
+                    // Show selected section
+                    const sectionId = item.dataset.section;
+                    document.getElementById(sectionId).classList.add('active');
+                    
+                    // Load section data
+                    loadSectionData(sectionId);
+                });
+            });
+        }
+
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/dashboard`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) throw new Error('Failed to load dashboard');
+
+                const data = await response.json();
+                updateDashboardUI(data.data);
+
+            } catch (error) {
+                console.error('Dashboard load error:', error);
+                showError('שגיאה בטעינת נתוני דשבורד');
+            }
+        }
+
+        // Update dashboard UI
+        function updateDashboardUI(data) {
+            // Use the actual data structure returned by API
+            document.getElementById('totalUsers').textContent = data.users || 0;
+            document.getElementById('totalConversations').textContent = '0'; // Not implemented yet
+            document.getElementById('totalPrompts').textContent = data.prompts || 0;
+            document.getElementById('securityEvents').textContent = '0';
+
+            // Update recent activity
+            const activityDiv = document.getElementById('recentActivity');
+            activityDiv.innerHTML = '<h3>פעילות אחרונה</h3>';
+            
+            if (data.recentActivity && data.recentActivity.length > 0) {
+                const table = document.createElement('table');
+                table.className = 'data-table';
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>זמן</th>
+                            <th>פעולה</th>
+                            <th>מנהל</th>
+                            <th>תיאור</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.recentActivity.map(log => `
+                            <tr>
+                                <td>${new Date(log.createdAt).toLocaleString('he-IL')}</td>
+                                <td>${log.actionDisplayName}</td>
+                                <td>${log.admin.firstName} ${log.admin.lastName}</td>
+                                <td>${log.description}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                `;
+                activityDiv.appendChild(table);
+            }
+        }
+
+        // Load section-specific data
+        async function loadSectionData(sectionId) {
+            const contentDiv = document.getElementById(`${sectionId}Content`);
+            if (!contentDiv) return;
+
+            contentDiv.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+            try {
+                let endpoint = '';
+                switch (sectionId) {
+                    case 'users':
+                        endpoint = '/admin/users';
+                        break;
+                    case 'prompts':
+                        endpoint = '/admin/prompts';
+                        break;
+                    case 'logs':
+                        endpoint = '/admin/logs';
+                        break;
+                    case 'analytics':
+                        endpoint = '/admin/analytics';
+                        break;
+                    default:
+                        contentDiv.innerHTML = '<p>תוכן בפיתוח...</p>';
+                        return;
+                }
+
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) throw new Error(`Failed to load ${sectionId}`);
+
+                const data = await response.json();
+                console.log(`API response for ${sectionId}:`, data);
+                renderSectionContent(sectionId, data.data, contentDiv);
+
+            } catch (error) {
+                console.error(`${sectionId} load error:`, error);
+                contentDiv.innerHTML = `<p style="color: red;">שגיאה בטעינת ${sectionId}</p>`;
+            }
+        }
+
+        // Render section content
+        function renderSectionContent(sectionId, data, container) {
+            switch (sectionId) {
+                case 'users':
+                    renderUsersContent(data, container);
+                    break;
+                case 'prompts':
+                    renderPromptsContent(data, container);
+                    break;
+                case 'logs':
+                    renderLogsContent(data, container);
+                    break;
+                case 'analytics':
+                    renderAnalyticsContent(data, container);
+                    break;
+            }
+        }
+
+        // Render users content
+        function renderUsersContent(data, container) {
+            if (!data.users || data.users.length === 0) {
+                container.innerHTML = '<p>אין משתמשים להצגה</p>';
+                return;
+            }
+
+            const table = document.createElement('table');
+            table.className = 'data-table';
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>שם</th>
+                        <th>אימייל</th>
+                        <th>תפקיד</th>
+                        <th>מנוי</th>
+                        <th>פעילות אחרונה</th>
+                        <th>פעולות</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${data.users.map(user => `
+                        <tr>
+                            <td>${user.firstName} ${user.lastName}</td>
+                            <td>${user.email}</td>
+                            <td><span class="security-badge ${user.role === 'admin' ? 'high' : 'low'}">${user.role}</span></td>
+                            <td>${user.subscriptionType}</td>
+                            <td>${user.lastActivity ? new Date(user.lastActivity).toLocaleDateString('he-IL') : 'אף פעם'}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick="editUser('${user._id}')">עריכה</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            `;
+            container.innerHTML = '';
+            container.appendChild(table);
+        }
+
+        // 🔒 CRITICAL: Render prompts content
+        function renderPromptsContent(data, container) {
+            // Extra security check
+            if (currentUser && currentUser.role !== 'admin') {
+                container.innerHTML = '<div class="security-warning"><i class="fas fa-ban"></i> אין הרשאה לצפות בתוכן זה</div>';
+                return;
+            }
+
+            // Debug: log the data structure
+            console.log('Prompts data received:', data);
+
+            // Handle both data.prompts and data directly containing prompts array
+            const prompts = data.prompts || data;
+            
+            if (!prompts || !Array.isArray(prompts) || prompts.length === 0) {
+                container.innerHTML = '<p>אין פרומפטים להצגה</p>';
+                return;
+            }
+
+            // Store prompts data globally for editing
+            window.loadedPromptsData = prompts;
+
+            const table = document.createElement('table');
+            table.className = 'data-table';
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>שם</th>
+                        <th>מפתח</th>
+                        <th>סוג</th>
+                        <th>קטגוריה</th>
+                        <th>עמוד</th>
+                        <th>סטטוס</th>
+                        <th>שימושים</th>
+                        <th>פעולות</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${prompts.map(prompt => `
+                        <tr>
+                            <td>${prompt.name}</td>
+                            <td><code>${prompt.key}</code></td>
+                            <td>${prompt.type}</td>
+                            <td>${prompt.category}</td>
+                            <td><span class="security-badge ${getPageTypeBadgeClass(prompt.pageType)}">${getPageTypeLabel(prompt.pageType)}</span></td>
+                            <td><span class="security-badge ${prompt.isActive ? 'low' : 'medium'}">${prompt.isActive ? 'פעיל' : 'לא פעיל'}</span></td>
+                            <td>${prompt.usage.totalUsages}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick="editPrompt('${prompt.id || prompt._id}')" style="margin-left: 5px;">עריכה</button>
+                                <button class="btn btn-danger btn-sm" onclick="deletePrompt('${prompt.id || prompt._id}')">מחק</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            `;
+            
+            // Add controls container
+            const controlsDiv = document.createElement('div');
+            controlsDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 15px;';
+            
+            // Add page type filter
+            const filterDiv = document.createElement('div');
+            filterDiv.style.cssText = 'display: flex; align-items: center; gap: 10px;';
+            filterDiv.innerHTML = `
+                <label for="pageTypeFilter" style="font-weight: 600;">סינון לפי עמוד:</label>
+                <select id="pageTypeFilter" onchange="filterPromptsByPage(this.value)" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                    <option value="all">כל הפרומפטים</option>
+                    <option value="editor">עורך חי</option>
+                    <option value="research">הדרת ספרים</option>
+                    <option value="both">משותף</option>
+                </select>
+            `;
+            
+            // Add create button
+            const createBtn = document.createElement('button');
+            createBtn.className = 'btn btn-success';
+            createBtn.innerHTML = '<i class="fas fa-plus"></i> פרומפט חדש';
+            createBtn.onclick = () => createNewPrompt();
+            
+            controlsDiv.appendChild(filterDiv);
+            controlsDiv.appendChild(createBtn);
+            
+            container.innerHTML = '';
+            container.appendChild(controlsDiv);
+            container.appendChild(table);
+        }
+
+        // Page type helper functions
+        function getPageTypeLabel(pageType) {
+            const labels = {
+                'editor': 'עורך חי',
+                'research': 'הדרת ספרים',
+                'both': 'משותף'
+            };
+            return labels[pageType] || pageType;
+        }
+        
+        function getPageTypeBadgeClass(pageType) {
+            const classes = {
+                'editor': 'medium',
+                'research': 'high', 
+                'both': 'low'
+            };
+            return classes[pageType] || 'medium';
+        }
+        
+        // Filter prompts by page type
+        function filterPromptsByPage(pageType) {
+            const table = document.querySelector('.data-table tbody');
+            if (!table) return;
+            
+            const rows = table.querySelectorAll('tr');
+            rows.forEach(row => {
+                const pageCell = row.cells[4]; // עמוד column
+                if (!pageCell) return;
+                
+                const pageBadge = pageCell.querySelector('.security-badge');
+                if (!pageBadge) return;
+                
+                const rowPageType = getPageTypeFromLabel(pageBadge.textContent);
+                
+                if (pageType === 'all') {
+                    row.style.display = '';
+                } else if (pageType === 'both') {
+                    row.style.display = rowPageType === 'both' ? '' : 'none';
+                } else {
+                    row.style.display = (rowPageType === pageType || rowPageType === 'both') ? '' : 'none';
+                }
+            });
+        }
+        
+        function getPageTypeFromLabel(label) {
+            const mapping = {
+                'עורך חי': 'editor',
+                'הדרת ספרים': 'research', 
+                'משותף': 'both'
+            };
+            return mapping[label] || 'both';
+        }
+
+        // Utility functions
+        function showError(message) {
+            alert('שגיאה: ' + message);
+        }
+
+        function redirectToLogin() {
+            localStorage.removeItem('adminToken');
+            window.location.href = '/admin-login';
+        }
+
+        function logout() {
+            if (confirm('האם אתה בטוח שברצונך להתנתק?')) {
+                localStorage.removeItem('adminToken');
+                window.location.href = '/';
+            }
+        }
+
+        // 🔒 CRITICAL: Prompt Management Functions
+        function createNewPrompt() {
+            showPromptModal();
+        }
+
+        function editPrompt(promptId) {
+            showPromptModal(promptId);
+        }
+
+        function deletePrompt(promptId) {
+            if (!confirm('האם אתה בטוח שברצונך למחוק פרומפט זה?\nפעולה זו בלתי הפיכה ותמחק את כל ההיסטוריה!')) {
+                return;
+            }
+
+            const reason = prompt('נא להזין סיבה למחיקה (נדרש):');
+            if (!reason || reason.trim().length < 5) {
+                alert('נדרשת סיבה של לפחות 5 תווים למחיקת פרומפט');
+                return;
+            }
+
+            deletePromptRequest(promptId, reason.trim());
+        }
+
+        async function deletePromptRequest(promptId, reason) {
+            try {
+                const response = await fetch(`${API_BASE}/admin/prompts/${promptId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ reason })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('פרומפט נמחק בהצלחה');
+                    loadSectionData('prompts'); // Reload prompts
+                } else {
+                    throw new Error(data.error || 'שגיאה במחיקת פרומפט');
+                }
+
+            } catch (error) {
+                console.error('Delete prompt error:', error);
+                alert('שגיאה במחיקת פרומפט: ' + error.message);
+            }
+        }
+
+        // 🔒 Show Prompt Management Modal
+        function showPromptModal(promptId = null) {
+            const isEdit = promptId !== null;
+            
+            const modalHtml = `
+                <div class="modal-overlay" id="promptModal" onclick="closeModal(event)">
+                    <div class="modal-content" onclick="event.stopPropagation()">
+                        <div class="modal-header">
+                            <h3>${isEdit ? 'עריכת פרומפט' : 'יצירת פרומפט חדש'}</h3>
+                            <button class="modal-close" onclick="closeModal()">&times;</button>
+                        </div>
+                        
+                        <div class="security-warning">
+                            <i class="fas fa-lock"></i>
+                            ${isEdit ? 'עריכת פרומפט קיים - שינוי ישפיע על כל השימושים החדשים' : 'יצירת פרומפט חדש - יישמר בהצפנה מתקדמת'}
+                        </div>
+
+                        <form id="promptForm" onsubmit="savePrompt(event, '${promptId || ''}')">
+                            <div class="form-group">
+                                <label for="promptName">שם הפרומפט:</label>
+                                <input type="text" id="promptName" name="name" required 
+                                       placeholder="לדוגמה: ניקוד טקסט תורני מתקדם" maxlength="100">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="promptKey">מפתח ייחודי:</label>
+                                <input type="text" id="promptKey" name="key" required 
+                                       placeholder="לדוגמה: nikud_torah_advanced" pattern="[a-z0-9_]+" 
+                                       title="רק אותיות קטנות באנגלית, מספרים וקו תחתון">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="promptCategory">קטגוריה:</label>
+                                <select id="promptCategory" name="category" required>
+                                    <option value="">בחר קטגוריה</option>
+                                    <option value="torah">תורה</option>
+                                    <option value="halacha">הלכה</option>
+                                    <option value="philosophy">פילוסופיה</option>
+                                    <option value="history">היסטוריה</option>
+                                    <option value="general">כללי</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="promptPageType">עמוד:</label>
+                                <select id="promptPageType" name="pageType" required>
+                                    <option value="">בחר עמוד</option>
+                                    <option value="editor">עורך חי</option>
+                                    <option value="research">הדרת ספרים</option>
+                                    <option value="both">משותף</option>
+                                </select>
+                                <small>בחר לאיזה עמוד הפרומפט שייך</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="promptDescription">תיאור:</label>
+                                <textarea id="promptDescription" name="description" required 
+                                          placeholder="תאר במדויק מה הפרומפט אמור לעשות..." 
+                                          rows="3" maxlength="500"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="promptContent">🔒 תוכן הפרומפט:</label>
+                                <textarea id="promptContent" name="content" required 
+                                          placeholder="כתוב כאן את ההוראות המלאות לבינה המלאכותית..."
+                                          rows="10" maxlength="10000"></textarea>
+                                <small>⚠️ תוכן זה יוצפן ולא יוצג למשתמשים</small>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="promptStatus">סטטוס:</label>
+                                    <select id="promptStatus" name="status">
+                                        <option value="active">פעיל</option>
+                                        <option value="inactive">לא פעיל</option>
+                                        <option value="testing">בבדיקה</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="promptPriority">עדיפות:</label>
+                                    <input type="number" id="promptPriority" name="priority" 
+                                           min="1" max="100" value="10">
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save"></i> ${isEdit ? 'עדכן פרומפט' : 'צור פרומפט'}
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="closeModal()">ביטול</button>
+                                ${isEdit ? '<button type="button" class="btn btn-danger" onclick="deletePrompt(\'' + promptId + '\')">מחק פרומפט</button>' : ''}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+
+            // Add modal to body
+            const existingModal = document.getElementById('promptModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+            // If editing, load prompt data
+            if (isEdit) {
+                loadPromptForEdit(promptId);
+            }
+
+            // Auto-generate key from name
+            document.getElementById('promptName').addEventListener('input', (e) => {
+                if (!isEdit) {
+                    const key = e.target.value.toLowerCase()
+                        .replace(/[^a-z0-9\s]/g, '')
+                        .replace(/\s+/g, '_')
+                        .substring(0, 50);
+                    document.getElementById('promptKey').value = key;
+                }
+            });
+        }
+
+        async function loadPromptForEdit(promptId) {
+            try {
+                console.log('Loading prompt for edit:', promptId);
+                
+                // Call API to get full prompt data with content
+                const response = await fetch(`${API_BASE}/admin/prompts/${promptId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server returned ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Received prompt data:', data);
+                
+                if (!data.success) {
+                    throw new Error(data.error || 'שגיאה בטעינת הפרומפט');
+                }
+
+                const prompt = data.data;
+
+                // Fill form with data from server
+                document.getElementById('promptName').value = prompt.name || '';
+                document.getElementById('promptKey').value = prompt.key || '';
+                document.getElementById('promptKey').disabled = true; // Don't allow key changes
+                document.getElementById('promptCategory').value = prompt.category || '';
+                document.getElementById('promptPageType').value = prompt.pageType || '';
+                document.getElementById('promptDescription').value = prompt.description || '';
+                
+                // Set content - this is the main fix!
+                const contentField = document.getElementById('promptContent');
+                if (prompt.content) {
+                    if (prompt.isEncrypted) {
+                        contentField.value = prompt.content; // Show encrypted placeholder
+                        contentField.disabled = true;
+                        contentField.placeholder = 'תוכן מוצפן - לא ניתן לעריכה ישירה';
+                    } else {
+                        contentField.value = prompt.content; // Show actual content
+                        contentField.disabled = false;
+                        contentField.placeholder = 'כתוב כאן את ההוראות המלאות לבינה המלאכותית...';
+                    }
+                } else {
+                    contentField.value = '';
+                    contentField.disabled = false;
+                    contentField.placeholder = 'כתוב כאן את ההוראות המלאות לבינה המלאכותית...';
+                }
+                
+                document.getElementById('promptStatus').value = prompt.status || (prompt.isActive ? 'active' : 'inactive');
+                document.getElementById('promptPriority').value = prompt.priority || 10;
+
+                console.log('Form populated successfully');
+
+            } catch (error) {
+                console.error('Load prompt error:', error);
+                alert('שגיאה בטעינת נתוני הפרומפט: ' + error.message);
+                closeModal();
+            }
+        }
+
+        async function savePrompt(event, promptId) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const promptData = {
+                name: formData.get('name'),
+                key: formData.get('key'),
+                category: formData.get('category'),
+                pageType: formData.get('pageType'),
+                description: formData.get('description'),
+                content: formData.get('content'),
+                status: formData.get('status'),
+                priority: parseInt(formData.get('priority')) || 10
+            };
+
+            try {
+                const isEdit = promptId && promptId !== '';
+                const url = isEdit ? 
+                    `${API_BASE}/admin/prompts/${promptId}` : 
+                    `${API_BASE}/admin/prompts`;
+                
+                const method = isEdit ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(promptData)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(isEdit ? 'פרומפט עודכן בהצלחה!' : 'פרומפט נוצר בהצלחה!');
+                    closeModal();
+                    loadSectionData('prompts'); // Reload prompts list
+                } else {
+                    throw new Error(result.error || 'שגיאה בשמירת פרומפט');
+                }
+
+            } catch (error) {
+                console.error('Save prompt error:', error);
+                alert('שגיאה בשמירת פרומפט: ' + error.message);
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('promptModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Placeholder functions for users
+        function editUser(userId) {
+            alert('ניהול משתמשים יתווסף בהמשך');
+        }
+
+        // 🔒 Security: Clear sensitive data on page unload
+        window.addEventListener('beforeunload', function() {
+            // Clear any sensitive data from memory
+            authToken = null;
+            currentUser = null;
+        });
+
+        // TEMP: Load prompts directly from database
+        async function loadPromptsDirectly(container) {
+            try {
+                container.innerHTML = '<p>🔄 טוען פרומפטים...</p>';
+                
+                // Load prompts from API
+                const response = await fetch(`${API_BASE}/admin/prompts`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load prompts');
+                }
+
+                const data = await response.json();
+                
+                if (data.success && data.data && data.data.prompts) {
+                    renderPromptsContent({ prompts: data.data.prompts }, container);
+                } else {
+                    throw new Error('Invalid response format');
+                }
+                
+            } catch (error) {
+                console.error('Error loading prompts:', error);
+                container.innerHTML = '<div class="error-message">❌ שגיאה בטעינת פרומפטים: ' + error.message + '</div>';
+            }
+        }
+
+        console.log('🔒 Admin Dashboard loaded with security protocols');
+    </script>
+</body>
+</html>

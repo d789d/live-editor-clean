@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>עורך תורני מקצועי - בינה מלאכותית לעיבוד טקסטים תורניים - V2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Heebo', -apple-system, sans-serif;
+            background: linear-gradient(to bottom, #ffffff, #f8fafc);
+            min-height: 100vh;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .hero-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #6b7280;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+        }
+
+        .btn-outline {
+            background: white;
+            color: #3b82f6;
+            border: 2px solid #3b82f6;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .features {
+            padding: 60px 0;
+            background: white;
+            margin-top: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 40px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .feature h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        .feature p {
+            color: #6b7280;
+        }
+
+        .admin-link {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            font-size: 0.9rem;
+        }
+
+        .admin-link a {
+            color: #6b7280;
+            text-decoration: none;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .admin-link a:hover {
+            background: white;
+            color: #3b82f6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <span class="hero-icon">📖</span>
+            <h1>עורך תורני מקצועי</h1>
+            <p>בינה מלאכותית מתקדמת לעיבוד טקסטים תורניים בעברית - פיסוק, ניקוד, עיצוב ועוד</p>
+            
+            <div class="buttons">
+                <a href="/user-login.html" class="btn btn-primary">התחל עכשיו בחינם</a>
+                <a href="/user-login.html" class="btn btn-outline">התחבר לחשבון קיים</a>
+            </div>
+        </div>
+
+        <div class="features">
+            <h2>מה אפשר לעשות עם העורך?</h2>
+            
+            <div class="features-grid">
+                <div class="feature">
+                    <span class="feature-icon">✍️</span>
+                    <h3>פיסוק מלא</h3>
+                    <p>הוספת פסיקים, נקודות ונקודותיים לפי כללי הדקדוק העברי</p>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">📝</span>
+                    <h3>ניקוד מדויק</h3>
+                    <p>הוספת ניקוד מדויק לטקסט על בסיס ההקשר והמשמעות</p>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">📄</span>
+                    <h3>חלוקה לפסקאות</h3>
+                    <p>ארגון הטקסט לפסקאות לוגיות לקריאה נוחה ומסודרת</p>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">🎨</span>
+                    <h3>עיצוב מתקדם</h3>
+                    <p>עיצוב הטקסט בהתאם לסטנדרטים של ספרות תורנית מקצועית</p>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">💬</span>
+                    <h3>צ'אט אינטראקטיבי</h3>
+                    <p>שיחה עם בינה מלאכותית לקבלת עזרה והנחיות בעיבוד הטקסט</p>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">🧹</span>
+                    <h3>ניקוי וסידור</h3>
+                    <p>הסרת רווחים מיותרים וסידור הטקסט בצורה נקייה ומקצועית</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-link">
+        <a href="/login.html">כניסה למנהלים</a>
+    </div>
+</body>
+</html>

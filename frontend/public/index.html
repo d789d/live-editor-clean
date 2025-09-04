@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מילה - עורך תורני מקצועי - בינה מלאכותית לעיבוד טקסטים תורניים</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', 'Heebo', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%);
+            min-height: 100vh;
+            color: #1f2937;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .hero-icon {
+            font-size: 4rem;
+            margin-bottom: 30px;
+            display: block;
+            color: #3b82f6;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 25px;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #6b7280;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-outline {
+            background: white;
+            color: #3b82f6;
+            border: 2px solid #3b82f6;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-outline:hover {
+            background: #f8fafc;
+        }
+
+        .features {
+            padding: 60px 0;
+            background: white;
+            margin-top: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 50px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 30px 20px;
+            background: #f9fafb;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            border: 1px solid #f1f5f9;
+        }
+
+        .feature:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            background: #ffffff;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            display: block;
+            color: #3b82f6;
+        }
+
+        .feature h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 15px;
+        }
+
+        .feature p {
+            color: #6b7280;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .admin-link {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            font-size: 0.9rem;
+        }
+
+        .admin-link a {
+            color: #6b7280;
+            text-decoration: none;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .admin-link a:hover {
+            color: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        .footer {
+            margin-top: 60px;
+            padding: 40px 0;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+            background: #f9fafb;
+        }
+
+        .copyright {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+
+        .institute-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #111827;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin-top: 10px;
+                margin-bottom: 10px;
+                padding: 30px 15px;
+            }
+
+            .hero {
+                padding: 40px 0;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+                margin-bottom: 20px;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+                margin-bottom: 35px;
+            }
+
+            .hero-icon {
+                font-size: 4rem;
+                margin-bottom: 25px;
+            }
+
+            .buttons {
+                gap: 12px;
+                flex-direction: column;
+            }
+
+            .btn {
+                padding: 16px 30px;
+                font-size: 1.1rem;
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .features {
+                padding: 50px 0;
+                margin-top: 40px;
+            }
+
+            .features h2 {
+                font-size: 2rem;
+                margin-bottom: 40px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .feature {
+                padding: 25px 20px;
+            }
+
+            .footer {
+                margin-top: 50px;
+                padding: 30px 0;
+            }
+
+            .admin-link {
+                bottom: 15px;
+                left: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .features h2 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <span class="hero-icon">📖</span>
+            <h1>מילה - עורך תורני מקצועי</h1>
+            <p>בינה מלאכותית מתקדמת לעיבוד טקסטים תורניים בעברית - פיסוק, ניקוד, עיצוב ועוד</p>
+            
+            <div class="buttons">
+                <a href="/login" class="btn btn-primary">התחל עכשיו בחינם</a>
+                <a href="/login" class="btn btn-outline">התחבר לחשבון קיים</a>
+            </div>
+        </div>
+
+        <div class="features">
+            <h2>מה אפשר לעשות עם העורך?</h2>
+            
+            <div class="features-grid">
+                <div class="feature">
+                    <span class="feature-icon">✍️</span>
+                    <h3>פיסוק מלא</h3>
+                    <p>הוספת פסיקים, נקודות ונקודותיים לפי כללי הדקדוק העברי</p>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">📝</span>
+                    <h3>ניקוד מדויק</h3>
+                    <p>הוספת ניקוד מדויק לטקסט על בסיס ההקשר והמשמעות</p>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">📄</span>
+                    <h3>חלוקה לפסקאות</h3>
+                    <p>ארגון הטקסט לפסקאות לוגיות לקריאה נוחה ומסודרת</p>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">📝</span>
+                    <h3>כותרות וחלוקה</h3>
+                    <p>הוספת כותרות ראשיות ומשנה לארגון מיטבי של הטקסט התורני</p>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">💬</span>
+                    <h3>צ'אט אינטראקטיבי</h3>
+                    <p>שיחה עם בינה מלאכותית לקבלת עזרה והנחיות בעיבוד הטקסט</p>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">🧹</span>
+                    <h3>ניקוי וסידור</h3>
+                    <p>הסרת רווחים מיותרים וסידור הטקסט בצורה נקייה ומקצועית</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="copyright">
+                כל הזכויות שמורות © 2025
+            </div>
+            <div class="institute-name">
+                מכון שוהם
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-link">
+        <a href="/admin-login">כניסה למנהלים</a>
+    </div>
+</body>
+</html>

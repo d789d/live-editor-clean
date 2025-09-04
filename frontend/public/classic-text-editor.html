@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הדרת ספרים - מילה</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Heebo', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8fafc;
+            color: #2c3e50;
+            direction: rtl;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            z-index: 2000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .top-nav.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #3b82f6;
+            text-decoration: none;
+        }
+
+        .nav-tabs {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            padding: 8px 16px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Heebo', sans-serif;
+            font-size: 0.85rem;
+            color: #374151;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: #f8fafc;
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-tab:hover {
+            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .nav-tab.active {
+            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background: #3b82f6;
+            border-radius: 2px;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0;
+            background: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .header {
+            background: #ffffff;
+            color: #2c3e50;
+            padding: 25px 30px;
+            text-align: right;
+            border-bottom: 1px solid #e1e8ed;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            position: relative;
+        }
+        
+        .logo {
+            font-family: 'Heebo', 'Assistant', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 200;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            letter-spacing: -2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            background: linear-gradient(45deg, #2c3e50, #3498db, #9b59b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .logo-subtitle {
+            font-family: 'Heebo', 'Assistant', sans-serif;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            font-weight: 300;
+            margin-top: -5px;
+            letter-spacing: 1px;
+        }
+
+        .main-title {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            font-weight: 300;
+            letter-spacing: -0.5px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .main-subtitle {
+            font-size: 1rem;
+            opacity: 0.7;
+            font-weight: 400;
+            text-align: center;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 250px 1fr 250px;
+            gap: 1px;
+            min-height: calc(100vh - 120px);
+            max-width: 100%;
+            flex: 1;
+            background: #e2e8f0;
+        }
+
+        .workspace {
+            padding: 30px;
+            background: white;
+            border-left: 1px solid #e0e6ed;
+            border-right: 1px solid #e0e6ed;
+            position: relative;
+            display: flex;
+            gap: 20px;
+        }
+
+        .left-panel {
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            animation: slideIn 0.8s ease-out;
+        }
+
+        .right-panel {
+            background: white;
+            border-left: 1px solid #e2e8f0;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            animation: slideIn 0.8s ease-out;
+            animation-delay: 0.2s;
+            animation-fill-mode: both;
+        }
+
+        .input-section, .output-section {
+            flex: 1;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #e1e8ed;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        
+        .copy-button {
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #7f8c8d;
+            transition: all 0.2s ease;
+        }
+        
+        .copy-button:hover {
+            background: #f8f9fa;
+            color: #2c3e50;
+            border-color: #bdc3c7;
+        }
+        
+        .copy-button.copied {
+            background: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+
+        .text-input, .text-output {
+            width: 100%;
+            height: 400px;
+            max-height: 400px;
+            padding: 18px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 15px;
+            font-family: 'Times New Roman', 'David Libre', serif;
+            line-height: 1.7;
+            resize: none;
+            transition: all 0.2s ease;
+            background: #ffffff;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border: 1px solid #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.08);
+        }
+
+        .text-output {
+            background: #fbfcfd;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            border: 1px solid #ddd;
+            position: relative;
+            height: 400px;
+            max-height: 400px;
+        }
+
+        .button-group {
+            padding: 15px;
+            border-bottom: 1px solid #f1f5f9;
+            animation: fadeInUp 0.6s ease-out;
+            animation-delay: 0.2s;
+            animation-fill-mode: both;
+        }
+
+        .button-group:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .button-group:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .group-title {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: right;
+        }
+
+        .action-button {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Heebo', sans-serif;
+            font-size: 0.85rem;
+            color: #374151;
+            transition: all 0.2s;
+            text-align: right;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+        
+        .action-button i {
+            width: 16px;
+            text-align: center;
+            color: #6b7280;
+        }
+        
+        .action-button .spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid #e1e8ed;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+        
+        .action-button.processing i {
+            display: none;
+        }
+        
+        .action-button.processing .spinner {
+            display: block;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .action-button:hover::before {
+            left: 100%;
+        }
+
+        .action-button:hover {
+            background: #f8fafc;
+            border-color: #3b82f6;
+            color: #3b82f6;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+        }
+
+        .action-button:active {
+            transform: translateY(0);
+        }
+
+        .action-button.processing {
+            background: #f1f5f9;
+            color: #6b7280;
+            border-color: #d1d5db;
+            pointer-events: none;
+        }
+
+        .status-bar {
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            padding: 12px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #27ae60;
+        }
+
+        .clear-button {
+            padding: 8px 16px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Heebo', sans-serif;
+            font-size: 0.85rem;
+            color: #374151;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .clear-button:hover {
+            background: #f8fafc;
+            border-color: #3b82f6;
+            color: #3b82f6;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+        }
+
+        .sidebar-header {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #374151;
+        }
+
+        .settings-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .setting-item {
+            margin-bottom: 15px;
+        }
+
+        .setting-item label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+
+        .setting-item input, .setting-item select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 180px 1fr 180px;
+            }
+            
+            .left-panel, .right-panel {
+                padding: 15px 10px;
+            }
+            
+            .action-button {
+                width: 50px;
+                height: 50px;
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr auto;
+            }
+            
+            .left-panel {
+                border-right: none;
+                border-bottom: 1px solid #e0e6ed;
+                flex-direction: row;
+                overflow-x: auto;
+            }
+            
+            .right-panel {
+                border-left: none;
+                border-top: 1px solid #e0e6ed;
+                flex-direction: row;
+                overflow-x: auto;
+            }
+            
+            .workspace {
+                border-left: none;
+                border-right: none;
+                flex-direction: column;
+            }
+            
+            .button-group {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+            
+            .action-button {
+                margin-bottom: 0;
+                flex-shrink: 0;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .header {
+                padding: 20px;
+                text-align: center;
+            }
+            
+            .logo {
+                font-size: 2.5rem;
+                letter-spacing: -1px;
+            }
+            
+            .logo-subtitle {
+                font-size: 0.8rem;
+            }
+            
+            .main-title {
+                font-size: 1.8rem;
+            }
+            
+            .workspace {
+                padding: 15px;
+                gap: 15px;
+            }
+            
+            .text-input, .text-output {
+                height: 300px;
+                max-height: 300px;
+                font-size: 16px;
+                padding: 15px;
+                overflow-y: auto;
+            }
+            
+            .left-panel, .right-panel {
+                padding: 15px;
+            }
+        }
+
+        /* Chat section styles */
+        .chat-section {
+            background: #ffffff;
+            border-top: 1px solid #e1e8ed;
+            padding: 15px 0;
+            margin-top: 15px;
+        }
+
+        .chat-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+            margin-bottom: 15px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 20px;
+            max-height: 80px;
+            line-height: 1.4;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.08);
+        }
+
+        .chat-send-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .chat-send-btn:hover {
+            background: #2980b9;
+        }
+
+        .chat-send-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .chat-messages {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
+            background: #fafbfc;
+            padding: 15px;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            line-height: 1.5;
+        }
+
+        .chat-message.user {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            margin-left: 20px;
+        }
+
+        .chat-message.assistant {
+            background: #f1f8e9;
+            border-left: 4px solid #4caf50;
+            margin-right: 20px;
+        }
+
+        .chat-message-header {
+            font-size: 11px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .chat-message-content {
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .chat-empty {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 13px;
+            font-style: italic;
+            padding: 30px;
+        }
+
+        /* Continuous Chat Section Styles */
+        .continuous-chat-section {
+            background: #ffffff;
+            border-top: 1px solid #e1e8ed;
+            padding: 15px 0;
+            margin-top: 15px;
+        }
+
+        .chat-history {
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
+            background: #fafbfc;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .chat-message-item {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        .chat-message-item.user-msg {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            margin-left: 20px;
+        }
+
+        .chat-message-item.assistant-msg {
+            background: #f1f8e9;
+            border-left: 4px solid #4caf50;
+            margin-right: 20px;
+        }
+
+        .chat-msg-header {
+            font-size: 11px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-msg-content {
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .msg-copy-btn {
+            background: transparent;
+            border: none;
+            color: #7f8c8d;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .msg-copy-btn:hover {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+        }
+
+        .msg-copy-btn.copied {
+            color: #27ae60;
+        }
+
+        /* Word Count Styling */
+        .word-count {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .word-count::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .word-count:hover::before {
+            left: 100%;
+        }
+
+        .word-count:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .output-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .word-count.empty {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            box-shadow: 0 2px 8px rgba(149, 165, 166, 0.3);
+        }
+
+        .word-count.low {
+            background: linear-gradient(135deg, #f39c12 0%, #d35400 100%);
+            box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
+        }
+
+        .word-count.medium {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        .word-count.high {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="top-nav" id="topNav">
+        <a href="/editor" class="nav-logo">מילה</a>
+        <div class="nav-tabs">
+            <a href="#" class="nav-tab active">הדרת ספרים</a>
+            <a href="/editor" class="nav-tab">עורך חי</a>
+            <a href="/research-tools" class="nav-tab">כלי מחקר</a>
+        </div>
+        <div class="nav-actions">
+            <a href="#" class="nav-btn" onclick="showUserProfile()">
+                <i class="fas fa-user"></i>
+                פרופיל משתמש
+            </a>
+            <a href="#" class="nav-btn" onclick="showHistory()">
+                <i class="fas fa-history"></i>
+                היסטוריה
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="sidebar-header">כלים עיקריים</div>
+                <div class="button-group">
+                    <div class="group-title">🔧 כלי עיבוד בסיסי</div>
+                    
+                    <button class="action-button" onclick="processText('punctuation')" id="btn-punctuation">
+                        <i class="fas fa-quote-right"></i>
+                        <div class="spinner"></div>
+                        פיסוק
+                    </button>
+                    
+                    <button class="action-button" onclick="processText('nikud')" id="btn-nikud">
+                        <i class="fas fa-font"></i>
+                        <div class="spinner"></div>
+                        ניקוד
+                    </button>
+                    
+                    <button class="action-button" onclick="processText('sources')" id="btn-sources">
+                        <i class="fas fa-book-open"></i>
+                        <div class="spinner"></div>
+                        מקורות
+                    </button>
+                    
+                    <button class="action-button" onclick="processText('grammar')" id="btn-grammar">
+                        <i class="fas fa-spell-check"></i>
+                        <div class="spinner"></div>
+                        דקדוק
+                    </button>
+                </div>
+
+                <div class="button-group">
+                    <div class="group-title">📝 עריכה ועיצוב</div>
+                    
+                    <button class="action-button" onclick="processText('edit')" id="btn-edit">
+                        <i class="fas fa-edit"></i>
+                        <div class="spinner"></div>
+                        עריכה
+                    </button>
+                    
+                    <button class="action-button" onclick="processText('format')" id="btn-format">
+                        <i class="fas fa-align-right"></i>
+                        <div class="spinner"></div>
+                        עיצוב
+                    </button>
+                    
+                    <button class="action-button" onclick="processText('truncate')" id="btn-truncate">
+                        <i class="fas fa-cut"></i>
+                        <div class="spinner"></div>
+                        קיצור
+                    </button>
+                </div>
+            </div>
+
+            <div class="workspace">
+                <div class="input-section">
+                    <div class="section-title">
+                        📝 הכנסת טקסט
+                        <div class="word-count" id="inputWordCount">0 מילים</div>
+                    </div>
+                    <textarea id="textInput" class="text-input" placeholder="הכנס כאן את הטקסט לעיבוד..."></textarea>
+                    
+                    <!-- AI Instructions Section inside input box -->
+                    <div class="chat-section">
+                        <div class="chat-title">
+                            <i class="fas fa-robot"></i>
+                            הוראה מותאמת אישית
+                        </div>
+                        <div class="chat-input-container">
+                            <textarea id="aiInstructions" class="chat-input" placeholder="הכנס כאן הוראה ספציפית למה לעשות עם הטקסט למעלה..."></textarea>
+                            <button id="executeBtn" class="chat-send-btn" onclick="executeAIInstructions()">
+                                <i class="fas fa-play"></i>
+                                הפעל
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="output-section">
+                    <div class="section-title">
+                        📄 תוצאת העיבוד
+                        <div class="output-controls">
+                            <div class="word-count" id="outputWordCount">0 מילים</div>
+                            <button id="copyButton" class="copy-button" onclick="copyOutput()" title="העתק תוצאה">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="textOutput" class="text-output">התוצאה תוצג כאן לאחר העיבוד...</div>
+                    
+                    <!-- Continuous Chat Section below output -->
+                    <div class="continuous-chat-section">
+                        <div class="chat-title">
+                            <i class="fas fa-comments"></i>
+                            המשך השיחה
+                        </div>
+                        <div class="chat-input-container">
+                            <textarea id="continuousChat" class="chat-input" placeholder="המשך את השיחה או שאל שאלה נוספת..."></textarea>
+                            <button id="continuousChatBtn" class="chat-send-btn" onclick="sendContinuousMessage()">
+                                <i class="fas fa-paper-plane"></i>
+                                שלח
+                            </button>
+                        </div>
+                        <div class="chat-history" id="chatHistory">
+                            <div class="chat-empty">כאן תופיע היסטוריית השיחה לאחר הפעלת הוראה מותאמת או שליחת הודעה ראשונה</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="sidebar-header">כלים נוספים</div>
+                <div class="button-group">
+                    <div class="group-title">🎯 כלים מתקדמים</div>
+                    
+                    <button class="action-button" onclick="processText('analyze')" id="btn-analyze">
+                        <i class="fas fa-chart-line"></i>
+                        <div class="spinner"></div>
+                        ניתוח
+                    </button>
+                    
+                    <button class="action-button" onclick="processText('translate')" id="btn-translate">
+                        <i class="fas fa-language"></i>
+                        <div class="spinner"></div>
+                        תרגום
+                    </button>
+                    
+                    <button class="action-button" onclick="processText('custom')" id="btn-custom">
+                        <i class="fas fa-cogs"></i>
+                        <div class="spinner"></div>
+                        מותאם
+                    </button>
+                    
+                    <button class="action-button" onclick="continueChat()" id="btn-continue">
+                        <i class="fas fa-play"></i>
+                        <div class="spinner"></div>
+                        המשך
+                    </button>
+                </div>
+
+                <div class="settings-section">
+                    <div class="group-title">⚙️ הגדרות</div>
+                    
+                    <div class="setting-item">
+                        <label for="maxTokens">מקסימום טוקנים:</label>
+                        <input type="number" id="maxTokens" value="2000" min="100" max="4000">
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label for="model">מודל:</label>
+                        <select id="model">
+                            <option value="claude-sonnet-4-20250514">Claude Sonnet 4</option>
+                            <option value="claude-3-5-sonnet-20241022">Claude 3.5 Sonnet</option>
+                        </select>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label for="customPrompt">הוראות נוספות:</label>
+                        <textarea id="customPrompt" rows="3" placeholder="הכנס הוראות מיוחדות..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span id="statusText">מוכן לעיבוד</span>
+            </div>
+            <div>
+                <button class="clear-button" onclick="clearAll()">נקה הכל</button>
+                <button class="clear-button" onclick="toggleChatMode()" id="chatModeBtn" style="margin-left: 10px; background: #28a745;">מצב שיחה</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let isProcessing = false;
+        let chatHistory = [];
+        let chatMode = false;
+        
+        // Global functions - defined first so they're available for onclick
+        window.processText = async function(action) {
+            console.log('processText called with action:', action);
+            // Debug message removed
+            if (isProcessing) {
+                console.log('Already processing, returning');
+                return;
+            }
+            
+            const inputText = document.getElementById('textInput').value.trim();
+            if (!inputText) {
+                showError('אנא הכנס טקסט לעיבוד');
+                return;
+            }
+
+            isProcessing = true;
+            const button = document.getElementById('btn-' + action);
+            
+            // עדכון מצב הכפתור
+            button.classList.add('processing');
+            
+            updateStatus('מעבד את הטקסט...');
+
+            try {
+                const customPrompt = document.getElementById('customPrompt').value.trim();
+
+                // Create the prompt based on action
+                let prompt = '';
+                if (action === 'custom' && customPrompt) {
+                    prompt = customPrompt + ': ' + inputText;
+                } else if (PROMPTS[action]) {
+                    prompt = PROMPTS[action] + ': ' + inputText;
+                } else {
+                    prompt = inputText;
+                }
+
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: prompt,
+                        action: action
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error || 'שגיאת שרת: ' + response.status);
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    const processedText = data.response;
+                    
+                    // עדכון היסטוריית השיחה
+                    if (chatMode) {
+                        chatHistory.push({role: 'user', content: inputText});
+                        chatHistory.push({role: 'assistant', content: processedText});
+                    }
+                    
+                    document.getElementById('textOutput').textContent = processedText;
+                    updateOutputWordCount();
+                    updateStatus('העיבוד הושלם בהצלחה');
+                } else {
+                    throw new Error(data.error || 'שגיאה בעיבוד הטקסט');
+                }
+
+            } catch (error) {
+                console.error('שגיאה בעיבוד:', error);
+                showError('שגיאה: ' + error.message);
+                updateStatus('שגיאה בעיבוד');
+            } finally {
+                isProcessing = false;
+                button.classList.remove('processing');
+            }
+        };
+        
+        window.executeAIInstructions = async function() {
+            console.log('executeAIInstructions called');
+            // Debug message removed
+            const aiInput = document.getElementById('aiInstructions');
+            const executeBtn = document.getElementById('executeBtn');
+            const inputText = document.getElementById('textInput').value.trim();
+            const instructions = aiInput.value.trim();
+            
+            if (!instructions) {
+                showError('אנא הכנס הוראה לבינה המלאכותית');
+                return;
+            }
+
+            if (!inputText) {
+                showError('אנא הכנס טקסט בתיבת הקלט העליונה');
+                return;
+            }
+
+            if (isProcessing) return;
+            isProcessing = true;
+            
+            // Reset chat history for new instruction
+            chatHistory = [];
+
+            // Disable button during processing
+            executeBtn.disabled = true;
+            executeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> מפעיל...';
+            
+            updateStatus('מפעיל את ההוראות על הטקסט...');
+
+            try {
+                // Create custom prompt with the instructions
+                const customPrompt = instructions;
+
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: customPrompt + ': ' + inputText,
+                        action: 'custom'
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error || 'שגיאת שרת: ' + response.status);
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    const processedText = data.response;
+                    
+                    // Update output
+                    document.getElementById('textOutput').textContent = processedText;
+                    updateOutputWordCount();
+                    
+                    // Add to chat history
+                    addChatMessage('user', 'הוראה: ' + instructions);
+                    addChatMessage('assistant', processedText);
+                    
+                    // Update chat history for continuous conversation
+                    chatHistory.push({role: 'user', content: 'הוראה: ' + instructions});
+                    chatHistory.push({role: 'assistant', content: processedText});
+                    
+                    updateStatus('ההוראות בוצעו בהצלחה');
+                } else {
+                    throw new Error(data.error || 'שגיאה בביצוע ההוראות');
+                }
+
+            } catch (error) {
+                console.error('שגיאה בביצוע ההוראות:', error);
+                showError('שגיאה: ' + error.message);
+                updateStatus('שגיאה בביצוע');
+            } finally {
+                // Re-enable button
+                isProcessing = false;
+                executeBtn.disabled = false;
+                executeBtn.innerHTML = '<i class="fas fa-play"></i> הפעל';
+            }
+        };
+        
+        window.sendContinuousMessage = async function() {
+            console.log('sendContinuousMessage called');
+            const continuousInput = document.getElementById('continuousChat');
+            const continuousBtn = document.getElementById('continuousChatBtn');
+            const message = continuousInput.value.trim();
+            
+            if (!message) {
+                showError('אנא הכנס הודעה להמשך השיחה');
+                return;
+            }
+
+            if (isProcessing) return;
+            isProcessing = true;
+
+            // Add user message to chat immediately (show only the original message)
+            addChatMessage('user', message);
+            
+            // Clear input
+            continuousInput.value = '';
+
+            // Disable button during processing
+            continuousBtn.disabled = true;
+            continuousBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> שולח...';
+            
+            updateStatus('ממשיך את השיחה...');
+
+            try {
+                // Get output text for context (will be sent to server separately)
+                const outputText = document.getElementById('textOutput').textContent.trim();
+
+                // Create message with context if available
+                let contextualMessage = message;
+                if (outputText !== 'התוצאה תוצג כאן לאחר העיבוד...') {
+                    contextualMessage = `בהתייחס לטקסט הבא:\n\n${outputText}\n\nשאלה: ${message}`;
+                }
+
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: contextualMessage,
+                        action: 'chat'
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error || 'שגיאת שרת: ' + response.status);
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    const responseText = data.response;
+                    
+                    // Update chat history - save original message for future context
+                    chatHistory.push({role: 'user', content: message});
+                    chatHistory.push({role: 'assistant', content: responseText});
+                    
+                    // Add response to chat display
+                    addChatMessage('assistant', responseText);
+                    
+                    updateStatus('תשובה התקבלה - ממשיכים בשיחה');
+                } else {
+                    throw new Error(data.error || 'שגיאה בקבלת תשובה');
+                }
+
+            } catch (error) {
+                console.error('שגיאה בשליחת הודעה:', error);
+                addChatMessage('assistant', 'שגיאה: ' + error.message);
+                updateStatus('שגיאה בשליחה');
+            } finally {
+                // Re-enable button
+                isProcessing = false;
+                continuousBtn.disabled = false;
+                continuousBtn.innerHTML = '<i class="fas fa-paper-plane"></i> שלח';
+            }
+        };
+
+        // Removed API_BASE - using local server instead
+        
+        // הגדרות פרומפט לכל פונקציה
+        const PROMPTS = {
+            punctuation: `פיסוק 3 - פיסוק מלא
+
+עם סימני שאלה וקריאה. הגדרה: כולל פסיקים, נקודות, נקודותיים, מרכאות.
+
+**הערת עצמאות**: בביצוע שלב זה, יטופלו אך ורק ענייני פיסוק. אין לשנות מילים בגוף הטקסט, שום מילה ושום אות. אין לגעת במבנה הקטעים, במראי המקומות או בכותרות הקיימות.
+
+1. סימני פיסוק - כללים ועקרונות:
+- פיסוק כולל: פסיקים, נקודות, ונקודותיים
+- שימוש מינימלי בסימני פיסוק
+- שמירה על סגנון הכתיבה המסורתי
+
+2. שימוש בנקודה:
+- בסוף משפט
+- לאחר ראשי תיבות
+- בסיום רעיון
+- לפני התחלת נושא חדש
+
+3. שימוש בפסיק:
+- בין חלקי משפט
+- ברשימות
+- לפני מילות קישור
+- להפרדה בין רעיונות משניים
+
+4. שימוש בנקודתיים:
+בציטוט של פסוקים
+דוגמא: כמו שנאמר: 'בראשית ברא אלקים'.
+
+5. סימני מרכאות:
+בציטוט פסוקים ומדרשים, השתמש במרכאה אחת.
+לדוגמא: 'ברכות אביך גברו'.
+
+6. סימני שאלה וקריאה:
+- הימנעות כמעט מוחלטת משימוש בסימן קריאה
+- סימן שאלה רק בקושיות מפורשות`,
+            
+            truncate: 'קצר את הטקסט הבא תוך שמירה על הרעיונות המרכזיים. הקפד על בהירות וקיצור:',
+            
+            nikud: 'הוסף ניקוד מלא ומדויק לטקסט העברי הבא. הקפד על דיוק בהברות ובהטעמות:',
+            
+            sources: 'הוסף מראי מקומות ומקורות רלוונטיים לטקסט הבא. כלול פסוקים, גמרא, מדרשים ומקורות רלוונטיים:',
+            
+            edit: 'ערוך את הטקסט הבא לשיפור הבהירות, הדיוק והזרימה. תקן שגיאות ושפר את הניסוח:',
+            
+            format: 'עצב את הטקסט הבא עם הדגשות מתאימות (**), מבנה ברור ועיצוב מקצועי:',
+            
+            grammar: 'בדוק ותקן שגיאות דקדוק, כתיב וניסוח בטקסט הבא:',
+            
+            analyze: 'נתח את הטקסט הבא - תוכן, מבנה, נושאים מרכזיים ומסקנות:',
+            
+            translate: 'תרגם את הטקסט הבא לשפה הנבחרת תוך שמירה על הנקודות ועל הרוח המקורית:',
+            
+            custom: 'עבד את הטקסט על פי ההוראות המיוחדות שסופקו:',
+            continue: 'המשך את השיחה וענה על השאלה או הבקשה:'
+        };
+
+        // Variables already declared above
+
+        // Navigation scroll effect
+        window.addEventListener('scroll', function() {
+            const topNav = document.getElementById('topNav');
+            if (window.scrollY > 10) {
+                topNav.classList.add('scrolled');
+            } else {
+                topNav.classList.remove('scrolled');
+            }
+        });
+
+        // Helper functions
+        function updateStatus(message) {
+            document.getElementById('statusText').textContent = message;
+        }
+
+        function showError(message) {
+            const outputDiv = document.getElementById('textOutput');
+            outputDiv.innerHTML = '<div class="error-message">⚠️ ' + message + '</div>';
+        }
+
+        function clearAll() {
+            if (confirm('האם אתה בטוח שברצונך לנקות את כל התוכן?')) {
+                document.getElementById('textInput').value = '';
+                document.getElementById('textOutput').textContent = 'התוצאה תוצג כאן לאחר העיבוד...';
+                document.getElementById('customPrompt').value = '';
+                document.getElementById('aiInstructions').value = '';
+                document.getElementById('continuousChat').value = '';
+                document.getElementById('chatHistory').innerHTML = '<div class="chat-empty">כאן תופיע היסטוריית השיחה לאחר הפעלת הוראה מותאמת או שליחת הודעה ראשונה</div>';
+                updateStatus('מוכן לעיבוד');
+                chatHistory = [];
+                updateInputWordCount();
+                updateOutputWordCount();
+            }
+        }
+        
+        function copyOutput() {
+            const outputText = document.getElementById('textOutput').textContent;
+            const copyButton = document.getElementById('copyButton');
+            
+            if (outputText && outputText !== 'התוצאה תוצג כאן לאחר העיבוד...') {
+                navigator.clipboard.writeText(outputText).then(() => {
+                    copyButton.innerHTML = '<i class="fas fa-check"></i>';
+                    copyButton.classList.add('copied');
+                    setTimeout(() => {
+                        copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+                        copyButton.classList.remove('copied');
+                    }, 2000);
+                }).catch(() => {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = outputText;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    
+                    copyButton.innerHTML = '<i class="fas fa-check"></i>';
+                    copyButton.classList.add('copied');
+                    setTimeout(() => {
+                        copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+                        copyButton.classList.remove('copied');
+                    }, 2000);
+                });
+            }
+        }
+        
+        function continueChat() {
+            const inputText = document.getElementById('textInput').value.trim();
+            if (!inputText) {
+                showError('אנא הכנס טקסט להמשך השיחה');
+                return;
+            }
+            
+            if (isProcessing) return;
+            
+            chatMode = true;
+            processText('continue');
+        }
+        
+        function toggleChatMode() {
+            chatMode = !chatMode;
+            const btn = document.getElementById('chatModeBtn');
+            
+            if (chatMode) {
+                btn.textContent = 'בטל שיחה';
+                btn.style.background = '#dc3545';
+                updateStatus('מצב שיחה פעיל');
+            } else {
+                btn.textContent = 'מצב שיחה';
+                btn.style.background = '#28a745';
+                chatHistory = [];
+                updateStatus('מצב שיחה לא פעיל');
+            }
+        }
+
+        function addChatMessage(role, content) {
+            const chatHistory = document.getElementById('chatHistory');
+            const isEmpty = chatHistory.querySelector('.chat-empty');
+            
+            if (isEmpty) {
+                chatHistory.innerHTML = '';
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message-item ' + (role === 'user' ? 'user-msg' : 'assistant-msg');
+            
+            const headerDiv = document.createElement('div');
+            headerDiv.className = 'chat-msg-header';
+            
+            const labelSpan = document.createElement('span');
+            labelSpan.textContent = role === 'user' ? 'אתה' : 'קלוד';
+            
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'msg-copy-btn';
+            copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+            copyBtn.title = 'העתק הודעה';
+            copyBtn.onclick = () => copyMessage(content, copyBtn);
+            
+            headerDiv.appendChild(labelSpan);
+            headerDiv.appendChild(copyBtn);
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'chat-msg-content';
+            contentDiv.textContent = content;
+            
+            messageDiv.appendChild(headerDiv);
+            messageDiv.appendChild(contentDiv);
+            chatHistory.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        function copyMessage(content, button) {
+            navigator.clipboard.writeText(content).then(() => {
+                const originalIcon = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i>';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.innerHTML = originalIcon;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = content;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const originalIcon = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i>';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.innerHTML = originalIcon;
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Word counting functions
+        function countWords(text) {
+            if (!text.trim()) return 0;
+            // Split by whitespace and filter out empty strings
+            return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+        }
+
+        function updateInputWordCount() {
+            const text = document.getElementById('textInput').value;
+            const wordCount = countWords(text);
+            const counter = document.getElementById('inputWordCount');
+            
+            counter.textContent = wordCount + ' מילים';
+            
+            // Update styling based on word count
+            counter.className = 'word-count';
+            if (wordCount === 0) {
+                counter.classList.add('empty');
+            } else if (wordCount < 50) {
+                counter.classList.add('low');
+            } else if (wordCount < 200) {
+                counter.classList.add('medium');
+            } else {
+                counter.classList.add('high');
+            }
+        }
+
+        function updateOutputWordCount() {
+            const text = document.getElementById('textOutput').textContent;
+            if (text === 'התוצאה תוצג כאן לאחר העיבוד...') {
+                updateOutputWordCountDisplay(0);
+                return;
+            }
+            
+            const wordCount = countWords(text);
+            updateOutputWordCountDisplay(wordCount);
+        }
+
+        function updateOutputWordCountDisplay(wordCount) {
+            const counter = document.getElementById('outputWordCount');
+            counter.textContent = wordCount + ' מילים';
+            
+            // Update styling based on word count
+            counter.className = 'word-count';
+            if (wordCount === 0) {
+                counter.classList.add('empty');
+            } else if (wordCount < 50) {
+                counter.classList.add('low');
+            } else if (wordCount < 200) {
+                counter.classList.add('medium');
+            } else {
+                counter.classList.add('high');
+            }
+        }
+
+        function showUserProfile() {
+            alert('פתיחת פרופיל משתמש - תכונה בפיתוח');
+        }
+
+        function showHistory() {
+            alert('פתיחת היסטוריית עבודה - תכונה בפיתוח');
+        }
+
+        // Event listeners
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                processText('punctuation'); // ברירת מחדל - פיסוק
+            }
+        });
+
+        // התאמת גובה אוטומטית לשדה הקלט וספירת מילים
+        document.getElementById('textInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 400) + 'px';
+            updateInputWordCount();
+        });
+
+        // AI Instructions Enter key support
+        document.getElementById('aiInstructions').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                executeAIInstructions();
+            }
+        });
+
+        // Continuous Chat Enter key support
+        document.getElementById('continuousChat').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendContinuousMessage();
+            }
+        });
+
+        // אתחול
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Content Loaded');
+            // Debug message removed
+            updateStatus('מוכן לעיבוד - הכנס טקסט ובחר פעולה');
+            updateInputWordCount();
+            updateOutputWordCount();
+            console.log('JavaScript loaded successfully');
+        });
+    </script>
+</body>
+</html>
